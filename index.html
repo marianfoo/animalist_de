@@ -217,7 +217,7 @@ function newGame() {
 }
 
 // big databases:
-// LOWER_TITLE_TO_ID: lowercase title to id.
+// LOWER_TITLE_TO_ID: lowercase title to id
 // ID_TO_TITLE: id to sentence-case title
 // PARENT: id to parent's id
 
@@ -452,7 +452,7 @@ function endGame() {
     </three-dimensional>
 
     <output id=comment for=guessbox></output>
-    <input id=guessbox autofocus autocomplete=off onkeydown=if(event.key==`Enter`){attempt()} oninput=uncomment()>
+    <input id=guessbox autofocus autocomplete=off onkeydown="if(event.key==`Enter`){attempt()}" oninput=uncomment()>
     <ul id=log role=log></ul>
 </body>
 
