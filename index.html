@@ -399,6 +399,7 @@ function generateShareString() {
 
 var shareString;
 function copyShareStringToClipboard() {
+    if (!navigator.clipboard) { summonConfetto('error >~<"', copybutton); }
     return navigator.clipboard.writeText(shareString)
         .then(()=>{ summonConfetto('copied!', copybutton); })
         .catch(()=>{ summonConfetto('error >_<"', copybutton); });
