@@ -289,7 +289,7 @@ function attempt() {
         }
         
         // Forbid this guess in the future.
-        guessed_ids.add(guess_id)
+        guessed_ids.add(guess_id);
         
         // Forbid this guess's parents.
         var ancestor_id = PARENT[guess_id];
@@ -388,11 +388,12 @@ function emojiSummary() {
             ancestor_id = PARENT[ancestor_id];
         }
     }
-    return summary
+    return summary;
 }
 
 function generateShareString() {
-    return 'https://rose.systems/animalist\n\n'+score+' animal'+(score!=1?'s':'')+' listed\n'+emojiSummary();
+    var timerDisclaimer = (initial_time_control.value!=60 || increment_control.value!=6) ? '⏱️'+initial_time_control.value+'/'+increment_control.value : '';
+    return 'https://rose.systems/animalist\n'+timerDisclaimer+'\n'+score+' animal'+(score!=1?'s':'')+' listed\n'+emojiSummary();
 }
 
 var shareString;
