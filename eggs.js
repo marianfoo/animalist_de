@@ -7,7 +7,7 @@ function invalid_guess_egg_message(guess) {
     if (guess == 'hint') {
         return choice(['Try thinking of ']) + choice(['bugs','farm animals','pests','dinosaurs','fish. Many fish names just end in -fish']) + '.';
     }
-    if (guess == 'dragon' || guess == 'jackalope') {
+    if (guess == 'dragon' || guess == 'jackalope' || guess == 'tsuchinoko') {
         return 'Real animals only, please.';
     }
     if (guess == 'jumping bean') {
@@ -31,8 +31,9 @@ function valid_guess_egg_message(guess, guess_id) {
     if (guess == 'killer hornet') {
         return "Okay, sure, I'll allow it, but you should really just call it the Asian giant hornet.";
     }
-    if (guess_id == 'Q15978631') { return "That's me!"; } // human
-    if (guess_id == 'Q1947892') { return "Don't you love their songs?" } // cicada
+    if (guess_id == 'Q15978631') { return "That's me!"; }
+    if (guess_id == 'Q1947892') { return "Don't you love their songs?"; }
+    if (guess_id == 'Q134944') { return "Okay, I'll just... file that under Animalia, I guess?"; }
 }
 
 function egg_manipulate_li(li, guess, guess_id) {
