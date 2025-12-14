@@ -377,12 +377,11 @@ function emojiSummary() {
     var summary = '';
     /* var mononymmed_ancestors = new Set(); */
     for (guessed_id of guessed_ids) {
-        if (abdicated_ids[guessed_id]) { continue; }
+        if (abdicated_ids.has(guessed_id)) { continue; }
         var ancestor_id = guessed_id;
         while (PARENT[ancestor_id]) {
-            if (MONONYMS[ancestor_id] /* && !mononymmed_ancestors.has(ancestor_id) */) {
+            if (MONONYMS[ancestor_id]) {
                 summary += choice(MONONYMS[ancestor_id]);
-                /* mononymmed_ancestors.add(ancestor_id); */
                 break;
             }
             ancestor_id = PARENT[ancestor_id];
