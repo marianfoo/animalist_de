@@ -241,6 +241,7 @@ function attempt() {
     var guess = guessbox.value.trim().toLowerCase();
     if (!guess) { return; }
     guesses.push(guess);
+    console.log(guess);
     if (guess=='crab') {
         comment.innerText = "(Carcinization makes it hard to define “crab”, so I'm going to pretend you said “hermit crab”.)";
         guess = 'hermit crab';
@@ -257,6 +258,7 @@ function attempt() {
             comment.innerText = 'Already said ' + ID_TO_TITLE[guess_id] + '.';
             var egg_message = equivalence_egg_message(guess, guess_id);
             if (egg_message) { comment.innerText+=' '+egg_message; }
+            console.log(' ♢ '+comment.innerText);
             wiggle(guessed_id_to_li[guess_id]);
             return;
         }
@@ -266,7 +268,21 @@ function attempt() {
             comment.innerText = 'Already said more specific animal: ' + ID_TO_TITLE[guessed_descendant[guess_id]];
             var egg_message = ancestry_egg_message(guess, guessed_descendant[guess_id], guess_id);
             if (egg_message) { appendp(comment, egg_message); }
-            wiggle(guessed_id_to_li[guessed_descendant[guess_id]]);
+            console.log(' ♢ '+comment.innerText);
+            // wiggle guessed descendants
+            var i = 0;
+            for (prev_guess_id of guessed_ids) {
+                i += 1;
+                if (i>99) { break; }
+                var ancestor_id = PARENT[prev_guess_id];
+                while (PARENT[ancestor_id]) {
+                    if (ancestor_id == guess_id) {
+                        wiggle(guessed_id_to_li[prev_guess_id]);
+                        break;
+                    }
+                    ancestor_id = PARENT[ancestor_id];
+                }
+            }
             return;
         }
         
