@@ -1,0 +1,79 @@
+
+/*
+
+svg noise background?
+3d gallery of photos?
+starfield?
+on earth, then on moon?
+
+score counter throbs at x00
+
+*/
+
+body { transition: all 10s linear; }
+
+body.sky {
+    background-color: lightskyblue;
+    background-image: url(media/clouds.svg);
+    background-size: cover;
+}
+
+
+
+html {
+    --periapsis: -9rem;
+    --initial-guessbox-height: 1.5em;
+    --guessbox-yscale: 1;
+    --extraneity: 0;
+}
+html.extraneous {
+    --extraniety: 1;
+    --guessbox-yscale: 9;
+}
+
+solar-system {
+    display: block;
+    transform-style: preserve-3d;
+    perspective: 12em;
+    height: calc((var(--initial-guessbox-height) + 0.4em ) * (var(--guessbox-yscale)));
+    VVborder-style:solid;
+    transition: all 2s ease-out;
+}
+
+#belt { display: none; }
+html.extraneous #belt {
+    display: block;
+    transform-style: preserve-3d;
+    rotate: 5deg;
+    text-align: center;
+    position: relative;
+    height: 0;
+    bottom: calc( -50% + 1em);
+    VVborder-style: dotted;
+}
+.orbiter {
+    animation-name: orbit;
+    animation-duration: 15s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    transform: rotateY(0turn) translateZ(var(--periapsis));
+    display: inline-block;
+    width: min-content;
+    font-size: 2em;
+    pointer-events: none;
+}
+
+@keyframes orbit { to { transform: rotateY(1turn) translateZ(var(--periapsis)); } }
+
+#guessbox {
+}    
+
+html.extraneous #guessbox {
+    height: var(--initial-guessbox-height);
+    Aopacity:0.9;
+    scale: 1 var(--guessbox-yscale);
+    transform: rotateX(5deg);
+    /*margin-bottom: calc(var(--initial-height) * ( var(--yscale) ));*/
+    transition: all 2s ease-out;
+    transform-origin: top center;
+}

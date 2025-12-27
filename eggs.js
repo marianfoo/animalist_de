@@ -1,5 +1,31 @@
 // Tiny little features nobody will notice, tucked away here so as not to clutter the mains.
 
+
+function ancests(possible_ancestor_id, guess_id) {
+    var ancestor_id = PARENT[guess_id];
+    while (PARENT[ancestor_id]) {
+        if (ancestor_id == possible_ancestor_id) { return true; }
+        ancestor_id = PARENT[ancestor_id];
+    }
+}
+
+major_groups = {
+    Bird: 'Q5113'
+}
+
+function has_guessed_nonbird() {
+    for (guess_id of guessed_ids) {
+        if (!ancests(major_groups.Bird, guess_id)) { return true; }
+    }
+}
+
+function score_egg() {
+    if (score != 5) { return; }
+    if (!has_guessed_nonbird()) {
+        //alert('bird alertttt');
+    }
+}
+
 function invalid_guess_egg_message(guess) {
     if (guess == 'help') {
         rules.open = true; return ' ';

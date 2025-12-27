@@ -192,7 +192,7 @@ h1 { transition: color, 1s; }
 
 
     </style>
-    <!--                                            <link rel=stylesheet href=evolution.css>    -->
+    <link rel=stylesheet href=evolution.css>
     <script src=lower_title_to_id.js></script>
     <script src=id_to_title.js></script>
     <script src=mononyms.js></script>
@@ -315,6 +315,7 @@ function attempt() {
         if (reward) {
             score += 1;
             if (endTime != undefined) { grantIncrement(); }
+            score_egg();
         }
         
         // Display any easter egg text for this guess.
@@ -407,8 +408,6 @@ function updateTimer() {
     timer.setAttribute('content', Math.floor(secondsLeft/60) + ":" + Math.floor(secondsLeft%60).toString().padStart(2,0));
 }
 
-setInterval(updateTimer);
-
 function emojiSummary() {
     var summary = '';
     /* var mononymmed_ancestors = new Set(); */
@@ -459,7 +458,7 @@ function endGame() {
     </script>
 </head>
 
-<body onload=newGame()>
+<body onload=newGame();setInterval(updateTimer)>
     <noscript>This game requires JavaScript. Or, if you've superior taste, take out a pen and paper and start listing animals.</noscript>
     <h1 id=h1>list animals until failure</h1>
     <details id=rules>
