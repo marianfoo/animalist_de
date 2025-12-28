@@ -142,6 +142,9 @@ function egg_manipulate_li(li, guess, guess_id) {
         li.style.scale = '3 1';
     }
     if (guess == 'dropbear' || guess == 'drop bear') {
-        // todo animation
+        li.style.position='relative';
+        li.style.top='-200vh';
+        li.style.transition='top 1s ease-in';
+        setTimeout(()=>{ li.style.top=0; }, 10)
     }
 }
