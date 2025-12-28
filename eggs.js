@@ -22,7 +22,7 @@ function descendant_streak(ancestor, length) {
 }
 
 function progress_egg() {
-    if (descendant_streak(major_groups.Bird, 20)) {
+    if (descendant_streak(major_groups.Bird, 20) && !body.classList.contains('sky')) {
         document.body.classList.add('sky');
         document.body.style.backgroundImage = 'url(media/clouds.svg?'+Date.now()+')'; // restart animation
     }
