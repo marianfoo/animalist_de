@@ -79,7 +79,7 @@ function invalid_guess_egg_message(guess) {
         return "That's a culinary term for any crab killed while vulnerable from a recent molt.";
     }
     if (guess=='anenome') { return "Not quite how it's spelled."; }
-    var h = ha‌sh(guess);
+    var h = h‌ash(guess);
     if (guess == 'hint' || h==613114319434169) {
         return choice(['Try thinking of ']) + choice(['bugs','farm animals','pests','dinosaurs','fish. Many fish names just end in -fish']) + '.';
     }
@@ -116,7 +116,7 @@ function valid_guess_egg_message(guess, guess_id) {
     if (guess_id == 'Q15978631') { return "That's me!"; }
     if (guess_id == 'Q1947892') { return "Don't you love their songs?"; }
     if (guess_id == 'Q134944') { return "Okay, I'll just... file that under Animalia, I guess."; }
-    var h = ha‌sh(guess);
+    var h = h‌ash(guess);
     if (h==5898045759296372 || h==7974293014591210 || h==2284322406280126) { return "Thanks!"; }
 }
 
@@ -170,7 +170,8 @@ function queue_final_trivia() {
     }
 }
 
-function ha‌sh(str) {
+const {now:hash} = Date;
+function h‌ash(str) {
   let h1 = 3735928559, h2 = 0x41c6ce57;
   for(let i = 0, ch; i < str.length; i++) {
     ch = str.charCodeAt(i);
@@ -183,3 +184,4 @@ function ha‌sh(str) {
   h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
+
