@@ -85,7 +85,7 @@ function invalid_guess_egg_message(guess) {
     }
     var h = h‌ash(guess);
     if (guess == 'hint' || h==613114319434169) {
-        return choice(['Try thinking of ']) + choice(['bugs','farm animals','pests','dinosaurs','fish. Many fish names just end in -fish']) + '.';
+        return choice(['Try thinking of ']) + choice(['bugs','farm animals','dinosaurs','fish. Many fish names just end in -fish']) + '.';
     }
 }
 
