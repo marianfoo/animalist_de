@@ -111,8 +111,11 @@ function valid_guess_egg_message(guess, guess_id) {
     if (guess == 'dingo' && guesses.includes('dog')) {
         return "Are you Australian?";
     }
-    if (guess=='ca' && !guess.includes('cat')) {
+    if (guess=='ca' && !guesses.includes('cat')) {
         return "You probably meant cat instead of Ca (genus of moths) but whatever.";
+    }
+    if (guess=='house spider') {
+        queue_trivium("The term “house spider” can refer to <a href=https://en.wikipedia.org/wiki/House_spider>multiple kinds of spider</a>, but it has <a href=extras/praiſe_of_the_houſe_Spider>a single entry in a 1600s bestiary that goes on and on about its wondrous beauty.</a>.");
     }
     if (guess=='elf') { return "Surely you mean the butterfly?"; }
     if (guess == 'featherless biped') { MONONYMS['Q15978631'] = ['𓅾']; return "That's me?"; }
@@ -175,7 +178,7 @@ function queue_trivium(html) {
 
 function queue_final_trivia() {
     if (guessed_ids.includes('Q26972265') && guessed_ids.includes('Q38584')) {
-        queue_trivium("You listed both dingos and dogs, so I gave you the benefit of the doubt, but <a href=//en.wikipedia.org/wiki/Dingo#Taxonomy>there's disagreement on whether the dingo is its own species of canid, a subspecies of grey wolf, or simply a breed of dog.</a>");
+        queue_trivium("You listed both dingos and dogs, so I gave you the benefit of the doubt, but <a href=https://en.wikipedia.org/wiki/Dingo#Taxonomy>there's disagreement on whether the dingo is its own species of canid, a subspecies of grey wolf, or simply a breed of dog.</a>");
     }
 }
 
