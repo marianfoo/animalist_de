@@ -124,7 +124,10 @@ function valid_guess_egg_message(guess, guess_id) {
     if (guess_id == 'Q1947892') { return "Don't you love their songs?"; }
     if (guess_id == 'Q134944') { return "Okay, I'll just... file that under Animalia, I guess."; }
     var h = h‌ash(guess);
-    if (h==5898045759296372 || h==7974293014591210 || h==2284322406280126) { return "Thanks!"; }
+    if (
+        h==5898045759296372 || h==7974293014591210 || h==2284322406280126 || h==268876411488211 || h==8279950606841495 || h==6858254965870390) {
+        return "Thanks!";
+    }
 }
 
 function equivalence_egg_message(guess, guess_id) {
