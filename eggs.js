@@ -95,6 +95,7 @@ function invalid_guess_egg_message(guess) {
         return "Not quite how it's spelled.";
     }
     if (guess=='dear' && !guesses.includes('deer')) { return "Wrong spelling, dear."; }
+    if (guess=='cryptobug') { return "That's a brand name."; }
     var h = h‌ash(guess);
     if (guess == 'hint' || h==613114319434169) {
         return choice(['Try thinking of ']) + choice(['bugs','farm animals','dinosaurs','fish. Many fish names just end in -fish']) + '.';
@@ -135,8 +136,7 @@ function valid_guess_egg_message(guess, guess_id) {
     if (guess_id == 'Q1947892') { return "Don't you love their songs?"; }
     if (guess_id == 'Q134944') { return "Okay, I'll just... file that under Animalia, I guess."; }
     var h = h‌ash(guess);
-    if (
-        h==5898045759296372 || h==7974293014591210 || h==2284322406280126 || h==268876411488211 || h==8279950606841495 || h==6858254965870390) {
+    if (h==5898045759296372 || h==7974293014591210 || h==2284322406280126 || h==268876411488211 || h==8279950606841495 || h==6858254965870390 || h==7434973200667552) {
         return "Thanks!";
     }
 }
@@ -144,6 +144,10 @@ function valid_guess_egg_message(guess, guess_id) {
 function equivalence_egg_message(guess, guess_id) {
     if (guess_id == 'Q10856' && (guess=='dove' || guess=='pigeon') && guesses.includes('dove') && guesses.includes('pigeon')) {
         return "Pigeons and doves are basically the same. They share a Wikipedia page.";
+    }
+    if (guess_id == 'Q18099' && (guess='bison' || guess=='buffalo') && guesses.includes('bison') && guesses.includes('buffalo')) {
+        queue_trivium_once("You might argue this game should interpret “bison” as <a href=https://en.wikipedia.org/wiki/Bison><i>Bison bison</i>, aka the American buffalo</a>, and interpret “buffalo” as <a href=https://en.wikipedia.org/wiki/True_buffalo><i>true</i> buffalo</a>, but since the American (and <a href=https://en.wikipedia.org/wiki/European_bison>European</a>) bison are colloquially known as “buffalo”, I think it's fair to treat them as interchangable terms. So anyone wanting points for buffalo has to name a specific one, like the African buffalo or dwarf buffalo or water buffalo.");
+        return "Sorry, but “buffalo” and “bison” have been interchanged for centuries.";
     }
 }
 
@@ -181,9 +185,16 @@ function egg_manipulate_li(li, guess, guess_id) {
     }
 }
 
+localStorage.triviaHashes ||= '';
+function queue_trivium_once(html) {
+    h = h‌ash(html);
+    if (!localStorage.triviaHashes.split(' ').includes(''+h)) {
+        queue_trivium(html);
+        localStorage.triviaHashes += ' ' + h;
+    }
+}
+
 function queue_trivium(html) {
-    // TODO check for hash in localStorage.usedHashes?
-    // localStorage.usedHashes += ' ' + h‌ash(html);
     let p = document.createElement('p');
     p.innerHTML = html;
     p.classList.add('trivium');
