@@ -178,6 +178,9 @@ h1 { transition: color, 1s; }
 #settings-page[open] h2 {
     display: inline;
 }
+body:has(#log li) #settings-page { /* hide settings during game */
+    display: none;
+}
 
 #gameoverscreen {
     display: none;
