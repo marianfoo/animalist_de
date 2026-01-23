@@ -67,8 +67,10 @@ function invalid_guess_egg_message(guess) {
     if (guess=='zedonk' || guess=='zorse') {
         return "The "+guess+" doesn't have its own English Wikipedia page; it's merely a subheading on Zebroid.";
     }
+    if (guess=='wolfdog') { return "Well, which is it? Wolf or dog?"; }
     if (guess=='xyzzy') { return 'Nothing happens.'; }
     if (guess=='fish') { return 'Surely you can name a specific kind of fish. I believe in you!'; }
+
     if (guess=='plankton') {
         queue_trivium("<a href=https://en.wikipedia.org/wiki/Plankton>read about plankton</a>");
         var m = "The term “plankton” actually refers to all drifting organisms lacking means to propel.";
@@ -79,16 +81,8 @@ function invalid_guess_egg_message(guess) {
         return 'Way too vague.';
     }
     if (guess=='phytoplankton') { return "“phyto” means “plant”."; }
-    if (guess=='lichen') { return "That's a fungus/algae combination, not an animal."; }
-    if (guess=='scabie' || guess=='scabies') {
-        queue_trivium("The word “scabies” actually comes from the Latin «<a href=//en.wiktionary.org/wiki/scabo#Latin>scabō</a>», a verb meaning to scratch or scrape. So while it's easy to assume that “scabies” refers to the parasites, but it basically just means “the itches”.");
-        return "Nice try, but the animal that causes scabies isn't called “a scabie”."
-    }
-    if (guess=='ringworm') { return "That's a fungal infection, actually."; }
-    if (guess=='pidgeon' || guess=='passenger pidgeon') {
-        queue_trivium("“pidgeon” <a href=https://en.wiktionary.org/wiki/pidgeon#English>is actually a documented archaic spelling</a>, but it's considered incorrect nowadays.");
-        return "Not actually spelled with a “d”.";
-    }
+
+    // Culinary terms
     if (guess=='softshell crab' || guess=='soft shell crab' || guess=='soft shelled crab' || guess=='softshelled crab') {
         queue_trivium("You mentioned <a href=https://en.wikipedia.org/wiki/Soft-shell_crab>softshell crab</a>, and that got me thinking: I think it's one of the worst meats, morally. Like I'm not even vegan but imagine you get caught by a giant and she puts you in a jail cell with a shower. Eventually you decide to take a shower, and then the giant is like, “hey great, your clothes are off, now I don't have to bother shucking them!” And then puts you on a shelf for someone to buy, and then someone buys you and cooks you WHILE YOU'RE NAKED. So undignified");
         return "That's a culinary term for any crab killed while vulnerable from a recent molt.";
@@ -98,6 +92,13 @@ function invalid_guess_egg_message(guess) {
     if (guess=='haggis' || guess == 'wild haggis') { return 'Left-footed or right-footed?'; }
     if (guess=='pork' || guess=='ham' || guess=='beef' || guess=='steak' || guess=='mutton' || guess=='veal') {
         return "That term only refers to the animal's corpse.";
+    }
+    if (guess=='cornish game hen') { return "That's a culinary term. It's just chicken."; }
+
+    // Misspellings
+    if (guess=='pidgeon' || guess.endsWith(' pidgeon')) {
+        queue_trivium("“pidgeon” <a href=https://en.wiktionary.org/wiki/pidgeon#English>is actually a documented archaic spelling</a>, but it's considered incorrect nowadays.");
+        return "Not actually spelled with a “d”.";
     }
     if (/^(sea )?a[mn]e[mn]o[mn]e$/.test(guess)) {
         queue_trivium("To remember how to spell “anemone”, consider the etymology: the Latin <i>anemone</i>; from Greek <i>anemonē</i> meaning “wind flower” or “daughter of the wind”, from <i>anemos</i> meaning “wind”. <i>anemos</i> comes from the Proto-Indo-European root <b>*ane-</b>, loosely meaning “to breathe”. This root is used for what seems to breathe: in other words, the <i>animate</i>, which comes from <i>anima</i> (meaning living being, soul, mind, passion, courage, anger, spirit, feeling) which comes from <b>*ane-</b>. Another word that comes from anima: <b>animal</b>!");
@@ -113,13 +114,29 @@ function invalid_guess_egg_message(guess) {
         queue_trivium("“caterpillar” is spelled with “-pillar”, not “-piller”, but the etymology derives from the Middle English «<a href=https://en.wiktionary.org/wiki/piller#Etymology_1>piller</a>», meaning to plunder. Presumably because they eat so much.");
         return "It ends in -pillar, not -piller.";
     }
+    if (guess=='lunar moth') { return "It's “luna”, actually."; }
+    if (guess=='cheeta') { return "You're missing a letter."; }
+
+    // Just not animals
+    if (guess=='algae') { return "No."; }
+    if (guess=='amoeba') {
+        queue_trivium("<a href=https://en.wikipedia.org/wiki/Amoeba>Learn what an amoeba is</a>");
+        return "Not really a kind of animal.";
+    }
+    if (guess=='bacteria') { return "Bacteria aren't animals."; }
+    if (guess=='lichen') { return "That's a fungus/algae combination, not an animal."; }
+    if (guess=='mushroom') { return "No, fungi aren't animals."; }
+    if (guess=='protozoa' || guess=='protozoan') { return "Not all protozoans are animals."; }
+    if (guess=='ringworm') { return "That's a fungal infection, actually."; }
+    if (guess=='scabie' || guess=='scabies') {
+        queue_trivium("The word “scabies” actually comes from the Latin «<a href=//en.wiktionary.org/wiki/scabo#Latin>scabō</a>», a verb meaning to scratch or scrape. It's easy to assume that “scabies” refers to the parasites, but it basically just means “the itches”.");
+        return "Nice try, but the animal that causes scabies isn't called “a scabie”."
+    }
+    if (guess=='tree') { return "Animals, not plants, please."; }
+    if (guess=='yeast') { return "That's fungus."; }
 
     if (guess=='cryptobug') { return "That's a brand name."; }
-    if (guess=='mushroom') { return "No, fungi aren't animals."; }
-    if (guess=='bacteria') { return "Bacteria aren't animals."; }
-    if (guess=='cheeta') { return "You're missing a letter."; }
     if (guess=='pikachu') { return "What? No. That is a Pokémon."; }
-    if (guess=='cornish game hen') { return "That's a culinary term. It's just chicken."; }
     if (guess=='black panther') { return "Not really a distinct animal."; }
     if (guess=='kudu') { return 'Lesser or greater?'; }
     if (guess=='arctic seal') { return "Lots of seals live in the Arctic. Can you be more specific?"; }
@@ -127,17 +144,16 @@ function invalid_guess_egg_message(guess) {
     if (guess=='green snake') { return "So many snakes are green. Which one?"; }
     if (guess=='mantaray') { return "It's two words, actually."; }
     if (guess=='carrier pigeon' || guess=='homing pigeon' || guess=='war pigeon' || guess=='mail pigeon'
-        || guess=='cleaner shrimp') {
+        || guess=='cleaner shrimp'
+        || guess=='worker bee') {
         return "That's more of an occupation, isn't it?";
     }
+    if (guess=='larva') { return "Many animals have a larval stage. Can you be more specific?"; }
     if (guess=='doe') {
         //todo trivium
         return "That can actually refer to a lot of different animals.";
     }
-    if (guess=='amoeba') {
-        queue_trivium("<a href=https://en.wikipedia.org/wiki/Amoeba>Learn what an amoeba is</a>");
-        return "Not really a kind of animal.";
-    }
+
     var h = h‌ash(guess);
     if (guess == 'hint' || h==613114319434169) {
         return choice(['Try thinking of ']) + choice(['bugs','farm animals','dinosaurs','fish. Many fish names just end in -fish']) + '.';
@@ -175,6 +191,9 @@ function valid_guess_egg_message(guess, guess_id) {
     if (guess=='pug') { return "I generously assume you mean the little brown moths called pugs."; }
     if (guess=='house spider') {
         queue_trivium("The term “house spider” can refer to <a href=https://en.wikipedia.org/wiki/House_spider>multiple kinds of spider</a>, but it has <a href=extras/praiſe_of_the_houſe_Spider>a single entry in a 1600s bestiary that goes on and on about its wondrous beauty.</a>.");
+    }
+    if (guess=='poodle moth') {
+        queue_trivium_once("I allowed “poodle moth”, but that's not really the name of an animal. An adorable photo captioned “Poodle moth, Venezuela” went viral after being taken in Canaima National Park in 2009. Its species is unknown; we only know it kinda resembles the poorly-understood <i>Artace</i> genus. So if you're in Venezuela, consider photographing moths!");
     }
     if (guess=='elf') { return "Surely you mean the butterfly?"; }
     if (guess == 'featherless biped') { MONONYMS['Q15978631'] = ['𓅾']; return "That's me?"; }
