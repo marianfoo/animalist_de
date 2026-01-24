@@ -146,7 +146,8 @@ function invalid_guess_egg_message(guess) {
     if (guess=='mantaray') { return "It's two words, actually."; }
     if (guess=='carrier pigeon' || guess=='homing pigeon' || guess=='war pigeon' || guess=='mail pigeon'
         || guess=='cleaner shrimp'
-        || guess=='worker bee') {
+        || guess=='worker bee'
+        || guess=='lab mouse' || guess=='laboratory mouse' || guess=='lab rat') {
         return "That's more of an occupation, isn't it?";
     }
     if (guess=='larva') { return "Many animals have a larval stage. Can you be more specific?"; }
