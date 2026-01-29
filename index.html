@@ -563,10 +563,10 @@ function updateTimer() {
         if (
             navigator.vibrate &&
             (Math.floor(prevSecondsLeft) > Math.floor(secondsLeft)) &&
-            secondsLeft <= 9 &&
+            secondsLeft < 9 &&
             secondsLeft > 0
         ) {
-            navigator.vibrate(7*Math.floor(secondsLeft));
+            navigator.vibrate(7*Math.floor(9-secondsLeft));
         }
     }
     if (secondsLeft <= 0) {
@@ -615,6 +615,7 @@ function cycleThank() {
 
 function endGame() {
     if (guessbox.disabled) { return; }
+    navigator.vibrate && navigator.vibrate(999);
     queue_final_trivia();
     cycleThank();
     shareString = generateShareString();
