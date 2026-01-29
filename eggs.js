@@ -151,7 +151,7 @@ function invalid_guess_egg_message(guess) {
     if (guess=='green snake') { return "So many snakes are green. Which one?"; }
     if (guess=='brown squirrel') { return "That's not really a distinct kind of squirrel."; }
     if (guess=='mantaray') { return "It's two words, actually."; }
-    if (guess=='carrier pigeon' || guess=='homing pigeon' || guess=='war pigeon' || guess=='mail pigeon'
+    if (guess=='carrier pigeon' || guess=='homing pigeon' || guess=='war pigeon' || guess=='mail pigeon' || guess=='messenger pigeon'
         || guess=='cleaner shrimp'
         || guess=='worker bee' || guess=='queen bee'
         || guess=='lab mouse' || guess=='laboratory mouse' || guess=='lab rat'
@@ -324,6 +324,12 @@ function queue_shy_trivium(html) {
     }
 }
 
+COMMONS = ['Q26972265','Q57818409','Q46889','Q10758650','Q140','Q18498','Q780','Q787','Q19939','Q29350771','Q13174621','Q659685','Q36396','Q685653','Q33609','Q36611','Q862089'];
+YOU_FORGOT_STARS = [
+    "You didn't list *.", "You left out *.",
+    'Did * not cross your mind?', 'Next time, remember the humble *.',
+    'What about *?', 'Never heard of a *?'
+]
 function queue_final_trivia() {
     if (guessed_ids.includes('Q26972265') && guessed_ids.includes('Q38584')) {
         queue_trivium_once("You listed both dingos and dogs, so I gave you the benefit of the doubt, but <a href=https://en.wikipedia.org/wiki/Dingo#Taxonomy>there's disagreement on whether the dingo is its own species of canid, a subspecies of grey wolf, or simply a breed of dog.</a>");
@@ -335,6 +341,20 @@ function queue_final_trivia() {
         queue_trivium_once(shy_trivia.pop());
     }
     shy_trivia = [];
+    if (
+        !trivia.innerText // No trivia so far
+        && score > 1 // Enough guesses to criticize
+        && guessed_descendant[LOWER_TITLE_TO_ID.bird] && guessed_descendant[LOWER_TITLE_TO_ID.insect] // Doesn't seem to be a challenge run like "only name birds"
+    ) {
+        for (common_id of COMMONS) {
+            if (Math.random() < 0.1) break;
+            if (!guessed_ids.includes(common_id) && !guessed_descendant[common_id]) {
+                YOU_FORGOT_STAR = YOU_FORGOT_STARS[Math.floor(Math.random()**3 * YOU_FORGOT_STARS.length)];
+                queue_trivium_once(YOU_FORGOT_STAR.replace('*',ID_TO_TITLE[common_id].toLowerCase()));
+                break;
+            }
+        }
+    }
 }
 
 function try_queue_pic_for(guess_id) {
@@ -401,3 +421,23 @@ function bteq() {
     underlay.style.animationName = 'none';
     THANKS.push('check out <a href=https://suricrasia.online/bteq/ target=_blank><img src=media/bteq/logov.svg alt="Bridge to eQualia" style=max-height:4em;vertical-align:middle></a>');
 }
+
+
+minecraft_animal_names = [
+    'armadillo','axolotl',
+    'bat','bee',
+    'camel','cat','chicken','cod','coral','cow',
+    'dolphin','donkey',
+    'fox','frog',
+    'goat',
+    'horse',
+    'mule',
+    'nautilus',
+    'ocelot',
+    'llama',
+    'panda','parrot','pig','polar bear','pufferfish',
+    'rabbit',
+    'sheep','silverfish','spider','sponge','squid',
+    'turtle',
+    'wolf'
+]
