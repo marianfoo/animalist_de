@@ -92,6 +92,7 @@ function invalid_guess_egg_message(guess) {
         return "That term only refers to the animal's corpse.";
     }
     if (guess=='cornish game hen' || guess=='cornish hen') { return "That's a culinary term. It's just chicken."; }
+    if (guess=='imitation crab') return 'Really?';
 
     // Misspellings
     if (guess=='pidgeon' || guess.endsWith(' pidgeon')) {
