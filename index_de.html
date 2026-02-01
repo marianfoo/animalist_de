@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Tiere auflisten bis zum Versagen</title>
+    <meta name="description" content="Nenne so viele Tiere wie du kannst">
+    <meta name="viewport" content="width=device-width,interactive-widget=resizes-content">
+    <style>
+
+html {color-scheme: light dark;}
+@media (prefers-color-scheme: light) {
+  html {
+    --background-color: #eee;
+    --foreground-color: #555;
+    --confetti-color: #337;
+    --modal-background-color: #ddd;
+    --urgent-color-1: #e93;
+    --urgent-color-2: #c11;
+    @media (prefers-contrast: more) {
+        --background-color: white;
+        --foreground-color: #111;
+        --modal-background-color: #eee;
+        --urgent-color-1: #c52;
+    }
+  }
+}
+@media (prefers-color-scheme: dark) {
+  html {
+    --background-color: #555;
+    --foreground-color: #eee;
+    --confetti-color: #99e;
+    --modal-background-color: #666;
+    --urgent-color-1: #e93;
+    --urgent-color-2: #c11;
+    @media (prefers-contrast: more) {
+        --background-color: #111;
+        --foreground-color: white;
+        --modal-background-color: #333;
+        --confetti-color: #ccf;
+    }
+  }
+}
+@media (prefers-contrast: more) {
+    #guessbox {
+        border-style: solid;
+        border-color: var(--foreground-color);
+    }
+}
+
+img { max-width: 100%; }
+
+body {
+    text-align: center;
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Byrose Sans,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+}
+
+h1 { transition: color, 1s; }
+
+#rules {
+    max-width: 35em;
+    display: inline-block;
+    text-align: left;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 1em;
+    padding: 0.5em;
+    transform-origin: top center;
+    &[open] {
+        animation-name: wiggle;
+        animation-duration: 0.3s;
+    }
+}
+#rules summary { text-align: center; cursor: default; user-select: none;}
+#rules:not([open]) summary { cursor: help }
+#original-credit {
+    font-size: small;
+    margin-top: 0.5em;
+    opacity: 0.8;
+}
+#original-credit a {
+    color: inherit;
+}
+body:has(#log li) #original-credit { /* während des Spiels ausblenden */
+    display: none;
+}
+#visualshint {
+    display: none;
+    animation-name: textappear;
+    animation-duration: 1s;
+}
+body.sky #visualshint, body.water #visualshint {
+    display: block;
+}
+@keyframes textappear { from { font-size: 0 } }
+
+#timerconfetti {
+    position: relative;
+    display: inline-block;
+    color: var(--confetti-color);
+    font-weight: bold;
+}
+.confetto {
+    position: absolute;
+    transition-property:        top,      left,   opacity, rotate;
+    transition-duration:        1s,       1s,     1s,      1s;
+    transition-timing-function: ease-out, linear, linear,  ease-out;
+    top: -1em; left: 0; opacity: 85%; rotate: 0;
+    pointer-events: none;
+}
+#timer {
+    font-family: monospace;
+    font-size: 1em;
+    /* @media (prefers-reduced-motion: no-preference) { */
+        transition-property: font-size;
+        transition-duration: 1s;
+    &::after {
+        content: attr(content);
+    }
+    &[content^="0:1"] {
+        font-size: 2em;
+        color: var(--urgent-color-1);
+    }
+    &[content^="0:0"] {
+        font-size: min(31vw, 62vh);
+        color: var(--urgent-color-2);
+    }
+}
+
+#comment {
+    display: block;
+    min-height: 1.3em;
+    padding: 1em;
+}
+
+#guessbox { font-size: 16px; }
+#guessbox[disabled] { opacity: 1; } /* Safari workaround (disabled textboxes have low opacity, which ghosts through gameoverscreen) */
+
+#log {
+    text-align: left;
+    max-width: 35em;
+    margin: auto;
+    margin-top: 1em;
+    li {
+        animation-name: bump;
+        animation-duration: 0.1s;
+        transform-origin: left center;
+    }
+}
+.abdicated {
+    list-style-type: circle;
+}
+.abdication-note {
+    font-size: small;
+    font-style: italic;
+    margin-left: 1em;
+}
+
+#settings-page {
+    position:absolute;
+    text-align: right;
+    right: 0;
+    @media (width >= 30em) { top: 0; }
+    @media (width < 30em) { bottom: 0; }
+    padding: 1em;
+    & summary { list-style: none; }
+    & label {
+        display: block;
+        margin: 0.25em;}
+}
+#gear {
+    display: inline-block;
+    font-size: xx-large;
+    user-select: none;
+    cursor: pointer;
+    transition: rotate 0.2s ease-out;
+    rotate: 0;
+    #settings-page[open] & { rotate: -22.5deg; }
+}
+#settings-page[open] {
+    border-left-style: outset;
+    @media (width >= 30em) { border-bottom-style: outset; }
+    @media (width < 30em) { border-top-style: outset; }
+    background-color: var(--modal-background-color);
+    & summary {
+        margin-bottom: 1em;
+    }
+}
+#settings-page h2 {
+    display: none;
+    position: absolute;
+    left: 1rem;
+    top: 0;
+}
+#settings-page[open] h2 {
+    display: inline;
+}
+body:has(#log li) #settings-page { /* hide settings during game */
+    display: none;
+}
+
+#gameoverscreen {
+    display: none;
+    position: absolute;
+    animation: stand .8s;
+    animation-timing-function: cubic-bezier(.18,.89,.33,1.33);
+    background-color: var(--modal-background-color);
+    padding: 1em;
+    left: 50%;
+    transform: translateX(-50%);
+    @media (prefers-contrast: more) { border-style: outset; }
+}
+#copybutton {
+    cursor: copy;
+    position: relative; /* for confetti */
+}
+#about {
+    margin-top: 1em;
+    & summary {
+        font-size: small;
+        user-select: none;
+    }
+    &:not([open]) summary { cursor: help; }
+}
+.pic {
+    margin-bottom: 1em;
+}
+
+@keyframes bump {
+    0%  {margin-left: 0em;}
+    50% {margin-left: -0.2em;}
+    to  {margin-left: 0em;}
+}
+
+@keyframes wiggle {
+    0%  {rotate: 0;}
+    25% {rotate: 5deg;}
+    50% {rotate: -2.5deg;}
+    75% {rotate: 1.25deg;}
+    to  {rotate: 0deg;}
+}
+
+@keyframes stand {
+    from {rotate: x 90deg;} to {rotate: x 0deg;}
+}
+
+#underlay {
+    opacity: 0;
+    position: fixed; left: 0; top: 0; height: 100vh; width: 100vw;
+    transition-property:        background-color, opacity,  filter;
+    transition-duration:        4s,               3s,       2s;
+    transition-timing-function: ease-in-out,      ease-out, ease-out;
+    z-index: -1;
+    /* Hintergrundbild deaktiviert - Datei fehlt */
+    /* & { background-image: url("list animals until failure_files/media/tile_ether.svg?"); } */
+    @media (prefers-color-scheme: dark) {
+        background-color: black;
+        body.sky & { mix-blend-mode: color; }
+    }
+    background-size: 2e3px;
+    animation-name:            background-north-2e3px, background-east-2e3px;
+    animation-duration:        100s,                   calc(pi * e * 10s);
+    animation-iteration-count: infinite,               infinite;
+    animation-timing-function: linear,                 linear;
+}
+@keyframes background-north-2e3px {
+    0% { background-position-y: 2e3px; }
+    to { background-position-y: 0px; }
+}
+@keyframes background-east-2e3px {
+    0% { background-position-x: 0px; }
+    to { background-position-x: 2e3px; }
+}
+@keyframes background-north-8e3px {
+    0% { background-position-y: 8e3px; }
+    to { background-position-y: 0px; }
+}
+@keyframes background-east-8e3px {
+    0% { background-position-x: 8e3px; }
+    to { background-position-x: 2e3px; }
+}
+
+#spider {
+    display: none;
+    position: absolute;
+    left: 5em;
+    top: -4em;
+    text-align: center;
+    width: min-content;
+}
+#spider::before {
+    content: "";
+    height: 100px;
+    display: inline-block;
+    border-left: 1px solid black;
+    @media (prefers-color-scheme: dark) { border-color: rgb(250, 255, 250, 60%); }
+    animation-name: abseil;
+    animation-duration: 20s;
+    animation-iteration-count: 1;
+}
+@keyframes abseil {
+    0%  { height: 0; }
+    50% { height: 30vh; }
+    to  { height: 0; }
+}
+
+#bat {
+    display: none;
+    position: absolute;
+    right: 10rem;
+    bottom: 100vh;
+    font-size: xxx-large;
+    transform-origin: bottom;
+    animation-name: roost;
+    animation-duration: 10s;
+}
+@keyframes roost {
+    10% { transform: rotateX(180deg); }
+    90% { transform: rotateX(180deg); }
+    to  { }
+}
+
+snail-race {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    width: 100%;
+}
+#snail {
+    display: none;
+    margin-left: calc(100vw + 1em);
+    font-size: xx-large;
+    animation-name: crawl;
+    animation-duration: 300s;
+    animation-timing-function: ease-out;
+}
+@keyframes crawl { to { margin-left: -1em; } }
+
+
+    </style>
+    <link rel="stylesheet" href="./list animals until failure_files/evolution.css">
+    <!-- Deutsche Daten-Dateien -->
+    <script src="./list animals until failure_files/de_lower_title_to_id.js"></script>
+    <script src="./list animals until failure_files/de_id_to_title.js"></script>
+    <script src="./list animals until failure_files/mononyms.js"></script>
+    <script src="./list animals until failure_files/de_parent.js"></script>
+    <script src="./list animals until failure_files/de_eggs.js"></script>
+    <script src="./list animals until failure_files/pics.js"></script>
+    <script src="./list animals until failure_files/de_thanks.js"></script>
+    <script>
+
+// Deutsche Nachrichten
+const MESSAGES = {
+    title: 'Tiere auflisten bis zum Versagen',
+    alreadySaid: 'Schon gesagt: ',
+    moreSpecific: 'Schon ein spezifischeres Tier genannt: ',
+    replacedVaguer: 'Ersetzt durch spezifischeres Tier: ',
+    replacedBy: ' Ersetzt durch spezifischeres ',
+    unknownAnimal: 'Dieses Tier kenne ich nicht.',
+    // Spezialfall für "Krabbe" (wie "crab" im Original)
+    crabNote: '(Es ist schwer „Krabbe" zu definieren, ich nehme mal an du meinst „Strandkrabbe".)'
+};
+
+function newGame() {
+    guessed_ids = []          // IDs der bereits geratenen Tiere
+    abdicated_ids = new Set() // IDs der Tiere, die durch spezifischere ersetzt wurden
+    guessed_id_to_li = {}     // geratene Tier-ID → das <li> Element
+    guessed_descendant = {}   // verbotener Elternknoten → bereits geratener Nachkomme
+    guesses = []              // bisherige Textratungen
+    score = 0;
+    scorespan.innerText = 0;
+    underlay.vibrance = 0;
+    trivia.textContent = '';
+    
+    startTime = undefined;
+    endTime = undefined;
+    log.innerText = '';
+    guessbox.value = '';
+    guessbox.disabled = null;
+    h1.style = '';
+    gameoverscreen.style = '';
+    visualshint.style = '';
+    underlay.style = '';
+    spider.style = '';
+    bat.style = '';
+    document.body.classList = [];
+    document.body.style = null;
+    dog_index = 0;
+    h1.innerText = MESSAGES.title;
+    
+    guessbox.focus()
+}
+
+// Große Datenbanken (geladen aus externen Dateien):
+// LOWER_TITLE_TO_ID: Kleinbuchstaben-Titel → ID
+// ID_TO_TITLE: ID → Anzeige-Titel
+// PARENT: ID → Eltern-ID
+
+function wiggle(e) {
+    e.style.animation = null;
+    e.offsetTop;
+    e.style.animation = 'wiggle 0.2s';
+}
+
+function choice(l) { return l[Math.floor(Math.random()*l.length)]; }
+
+function appendp(element, text) {
+    var p = document.createElement('p');
+    p.innerText = text;
+    element.append(p);
+}
+
+function attempt() {
+    var verbatim_guess = guessbox.value;
+    // Normalisierung für deutsche Eingabe (Umlaute bleiben erhalten)
+    var guess = guessbox.value.trim().toLowerCase()
+        .replaceAll("-"," ")
+        .replaceAll("\u2019","'")
+        .replaceAll(/ +/g, ' ');
+    if (!guess) { return; }
+    guesses.push(guess);
+    console.log(guess);
+    
+    // Spezialfall für "Krabbe" (wie "crab" im Original)
+    if (guess=='krabbe') {
+        comment.innerText = MESSAGES.crabNote;
+        guess = 'strandkrabbe';
+    }
+    
+    if (LOWER_TITLE_TO_ID[guess]) {
+        var guess_id = LOWER_TITLE_TO_ID[guess];
+        
+        // Es ist ein Tier. Aber gibt es einen Konflikt mit bereits geratenen?
+        // Es könnte bereits geraten sein, ein Elternteil eines Ratens, oder ein Kind eines Ratens.
+        
+        // Wurde es bereits geraten?        
+        if (guessed_ids.includes(guess_id)) {
+            comment.innerText = MESSAGES.alreadySaid + ID_TO_TITLE[guess_id] + '.';
+            var egg_message = equivalence_egg_message(guess, guess_id);
+            if (egg_message) { comment.innerText+=' '+egg_message; }
+            console.log(' ♢ '+comment.innerText);
+            wiggle(guessed_id_to_li[guess_id]);
+            return;
+        }
+
+        // Ist es ein Vorfahre einer vorherigen Ratung?
+        if (guessed_descendant[guess_id]) {
+            comment.innerText = MESSAGES.moreSpecific + ID_TO_TITLE[guessed_descendant[guess_id]];
+            var egg_message = ancestry_egg_message(guess, guessed_descendant[guess_id], guess_id);
+            if (egg_message) { appendp(comment, egg_message); }
+            console.log(' ♢ '+comment.innerText);
+            // Wackeln der geratenen Nachkommen
+            var i = 0;
+            for (prev_guess_id of guessed_ids) {
+                i += 1;
+                if (i>99) { break; }
+                var ancestor_id = PARENT[prev_guess_id];
+                while (PARENT[ancestor_id]) {
+                    if (ancestor_id == guess_id) {
+                        wiggle(guessed_id_to_li[prev_guess_id]);
+                        break;
+                    }
+                    ancestor_id = PARENT[ancestor_id];
+                }
+            }
+            return;
+        }
+        
+        // Ratung ist gültig.        
+        // Aber ist es ein Kind einer Ratung? Falls ja, gibt der Elternteil ab, und keine Belohnung.
+        var ancestor_id = PARENT[guess_id];
+        var reward = true;
+        while (PARENT[ancestor_id]) {
+            if (guessed_ids.includes(ancestor_id) && !abdicated_ids.has(ancestor_id)) {
+                abdicated_ids.add(ancestor_id);
+                var li = guessed_id_to_li[ancestor_id]
+                var s = document.createElement('s');
+                s.append(li.childNodes[0]);
+                li.append(s)
+                var abdication_note = document.createElement('span');
+                abdication_note.classList.add('abdication-note');
+                abdication_note.innerHTML = MESSAGES.replacedBy + ID_TO_TITLE[guess_id];
+                guessed_id_to_li[ancestor_id].append(abdication_note);
+                guessed_id_to_li[ancestor_id].classList.add('abdicated');
+                comment.innerText = MESSAGES.replacedVaguer + ID_TO_TITLE[ancestor_id]
+                var egg_message = ancestry_egg_message(guess, guess_id, ancestor_id);
+                if (egg_message) { appendp(comment, egg_message); }
+                reward = false;
+                break;
+            }
+            ancestor_id = PARENT[ancestor_id];
+        }
+        
+        if (reward) {
+            score += 1;
+            if (endTime != undefined) { grantIncrement(); }
+            underlay.vibrance += 100;
+        }
+        
+        // Easter-Egg Nachricht anzeigen
+        var egg_message = valid_guess_egg_message(guess, guess_id);
+        if (egg_message) {
+            if (comment.innerText) { comment.innerText += "."; } 
+            comment.innerText += ' ' + egg_message;
+        }
+        
+        // Diese Ratung für die Zukunft verbieten.
+        guessed_ids.push(guess_id);
+        
+        // Eltern dieser Ratung verbieten.
+        var ancestor_id = PARENT[guess_id];
+        while (PARENT[ancestor_id]) {
+            guessed_descendant[ancestor_id] = guess_id;
+            ancestor_id = PARENT[ancestor_id];
+        }
+        
+        // Listenelement für die Ratung erstellen
+        li = document.createElement('li');
+        if (ID_TO_TITLE[guess_id].toLowerCase().replaceAll("-"," ") == guess) {
+            li.innerText = ID_TO_TITLE[guess_id];
+        } else {
+            li.innerText = verbatim_guess + ' → ' + ID_TO_TITLE[guess_id];
+        }
+        guessed_id_to_li[guess_id] = li;
+        egg_manipulate_li(li, guess, guess_id);
+        progress_egg();
+        log.prepend(li);
+        
+        // UI aktualisieren.
+        guessbox.value='';
+        scorespan.innerText = score;
+        
+        // Farbe ändern basierend auf dem Tiernamen (deutsche Farben funktionieren in CSS nicht)
+        // Wir behalten die englische Farblogik für CSS-Kompatibilität
+        for (word of (guess+' '+ID_TO_TITLE[guess_id]).replace('bird','-').split(/[ -]/)) {
+            if (CSS.supports('color', word) && word!='field' && word!='canvas' && word!='mark' && word!='highlight') {
+                h1.style.color = word;
+                break;
+            }
+        }
+    } else {
+        comment.innerText = invalid_guess_egg_message(guess) || MESSAGES.unknownAnimal;
+        return;
+    }
+    if (startTime == undefined) {
+        startTime = Date.now();
+        endTime = startTime + initial_time_control.value*1000;
+    }
+    updateTimer();
+}
+
+function uncomment() {
+    comment.innerText='';
+}
+
+function grantIncrement(ms) {
+    ms = ms || increment_control.value*1000;
+    if (!ms) {return;}
+    endTime += ms;
+    summonConfetto('+' + Math.floor(ms/1000), timerconfetti);
+}
+
+function summonConfetto(text, parent) {
+    var confetto = document.createElement('span');
+    confetto.classList.add('confetto');
+    confetto.innerText = text;
+    parent.append(confetto);
+    setTimeout(()=>{confetto.remove()}, 2000);
+    setTimeout(()=>{
+        confetto.style.top = '-5em';
+        confetto.style.left = (Math.random()*4-2) + 'em';
+        confetto.style.opacity = 0;
+        confetto.style.rotate = (Math.random()**2-0.5) + 'rad';
+    },10)
+}
+
+function updateUnderlay() {
+    underlay.style.opacity = underlay.style.backgroundImage ? score/7 : -1 + (score/50);
+    if (score == 60) { visualshint.style.display = 'block'; }
+    underlay.vibrance = Math.max(0, underlay.vibrance*0.99);
+    underlay.style.filter = 'saturate(' + (1+Math.floor(underlay.vibrance/90)) + ')';
+}
+
+var secondsLeft;
+function updateTimer() {
+    if (startTime == undefined) {
+        initial_time_control.value = Math.max(1, initial_time_control.value);
+        secondsLeft = initial_time_control.value;
+    } else {
+        let prevSecondsLeft = secondsLeft;
+        secondsLeft = (endTime - Date.now())/1000;
+        if (
+            navigator.vibrate &&
+            (Math.floor(prevSecondsLeft) > Math.floor(secondsLeft)) &&
+            secondsLeft < 9 &&
+            secondsLeft > 0
+        ) {
+            navigator.vibrate(7*Math.floor(9-secondsLeft));
+        }
+    }
+    if (secondsLeft <= 0) {
+        endGame();
+        secondsLeft = 0;
+    }
+    timer.setAttribute('content', Math.floor(secondsLeft/60) + ":" + Math.floor(secondsLeft%60).toString().padStart(2,0));
+}
+
+function emojiSummary() {
+    var summary = '';
+    for (guessed_id of guessed_ids) {
+        if (abdicated_ids.has(guessed_id)) { continue; }
+        var ancestor_id = guessed_id;
+        while (PARENT[ancestor_id]) {
+            if (MONONYMS && MONONYMS[ancestor_id]) {
+                summary += choice(MONONYMS[ancestor_id]);
+                break;
+            }
+            ancestor_id = PARENT[ancestor_id];
+        }
+    }
+    return summary;
+}
+
+function generateShareString() {
+    var timerDisclaimer = (initial_time_control.value!=60 || increment_control.value!=6) ? '⏱️'+initial_time_control.value+'/'+increment_control.value : '';
+    return 'Tiere auflisten\n'+timerDisclaimer+'\n'+score+' Tier'+(score!=1?'e':'')+' genannt\n'+emojiSummary();
+}
+
+var shareString;
+function copyShareStringToClipboard() {
+    if (!navigator.clipboard) { summonConfetto('Fehler >~<"', copybutton); }
+    return navigator.clipboard.writeText(shareString)
+        .then(()=>{ summonConfetto('Kopiert!', copybutton); })
+        .catch(()=>{ summonConfetto('Fehler >_<"', copybutton); });
+}
+
+var thankIndex;
+function cycleThank() {
+    thankIndex ||= score;
+    thankIndex = (thankIndex + 1) % THANKS.length;
+    thank.innerHTML = THANKS[thankIndex];
+}
+
+function endGame() {
+    if (guessbox.disabled) { return; }
+    navigator.vibrate && navigator.vibrate(999);
+    if (typeof queue_final_trivia === 'function') { queue_final_trivia(); }
+    cycleThank();
+    shareString = generateShareString();
+    copybutton.style.display = navigator.clipboard ? null : 'none';
+    gameoverscreen.style.display = 'block';
+    guessbox.disabled = true;
+    comment.innerText = '';
+    // Kein Tracking an externe Server
+}
+
+function load() {
+    newGame();
+    updateTimer();  // Timer sofort beim Laden anzeigen
+    setInterval(updateTimer, 100);  // Mit korrektem Intervall
+    setInterval(updateUnderlay, 100);
+}
+
+    </script>
+</head>
+
+<body onload="load()">
+    <div id="underlay"></div>
+    <noscript>Dieses Spiel benötigt JavaScript. Oder nimm Stift und Papier und fang an, Tiere aufzulisten.</noscript>
+    <h1 id="h1">Tiere auflisten bis zum Versagen</h1>
+    <details id="rules">
+        <summary>Nenne so viele Tiere wie du kannst.</summary>
+        <p><b>Tiere müssen Wikipedia-Artikel haben.</b>
+        </p><p><b>Du hast begrenzte Zeit, bekommst aber mehr Zeit für jedes genannte Tier.</b> Wenn die Zeit abläuft, ist das Spiel vorbei.
+        </p><p><b>Keine überlappenden Begriffe.</b>
+           Wenn du zum Beispiel „Bär" und „Eisbär" nennst, bekommst du keinen Punkt (und keinen Zeitbonus) für Letzteres.
+           Aber du kannst trotzdem einen Punkt für eine andere Bärenart bekommen. Die Reihenfolge spielt keine Rolle.
+        </p><p id="visualshint"><b style="color:var(--urgent-color-1)">Ignoriere die Hintergrundeffekte.</b>
+           Konzentriere dich auf das Nennen von Tieren.
+    </p></details>
+    <p id="original-credit">
+        Originalspiel: <a href="https://rose.systems/animalist/" target="_blank">List Animals Until Failure</a> von <a href="https://rose.systems/" target="_blank">Vivian Rose</a>
+    </p>
+    
+    <details id="settings-page">
+        <summary title="Einstellungen"><h2>Einstellungen</h2><span id="gear">⚙️</span></summary>
+        <label>Startzeit (Sek.): <input type="number" size="2" id="initial_time_control" min="1" value="60"></label>
+        <label>Zeitbonus (Sek.): <input type="number" size="2" id="increment_control" min="0" value="6"></label>
+        <button onclick="initial_time_control.value=60;increment_control.value=6">Zurücksetzen</button>
+    </details>
+   
+    <p>Punkte: <span id="scorespan">0</span></p>
+    
+    <div style="height:1.5em">
+        <game-timer id="timer" role="timer"></game-timer>
+        <div id="timerconfetti"></div>
+    </div>
+    
+    <three-dimensional style="perspective:30rem;display:block">
+        <section id="gameoverscreen">
+            <h2>Spiel vorbei</h2>
+            <section id="trivia"></section>
+            <button id="copybutton" onclick="copyShareStringToClipboard()">Emoji-Ergebnis teilen</button> <button onclick="newGame()">Nochmal spielen</button>
+            <details id="about" ontoggle="if(event.newState.at(5)){cycleThank();}"><summary>Über dieses Spiel</summary>
+                <p>Basierend auf <a href="https://rose.systems/animalist/">List Animals Until Failure</a> von Vivian Rose.
+                </p><p>Deutsche Version. Nutzt Wikipedia und Wikidata.
+                </p><p id="thank" style="font-size:small"></p>
+            </details>
+        </section>
+    </three-dimensional>
+    
+    <output id="comment" for="guessbox"></output>
+    <solar-system>
+        <input id="guessbox" autofocus="" autocomplete="off" onkeydown="if(event.key==`Enter`){attempt()}" oninput="uncomment()" placeholder="Tier eingeben...">
+    </solar-system>
+    <ul id="log"></ul>
+    
+    <div id="spider" aria-hidden="">🕷️</div>
+    <div id="bat" aria-hidden="">🦇</div>
+    <snail-race><div id="snail" aria-hidden="">🐌</div></snail-race>
+
+</body></html>

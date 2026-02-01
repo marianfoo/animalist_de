@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Python build files
+*.py
+fetch_checkpoint.pkl
+list\ animals\ until\ failure_files/fetch_checkpoint.pkl
+
+# Log files
+*.log
+fetch_log.txt
+
+# Original English HTML version (keeping German only)
+list\ animals\ until\ failure.html
+
+# Original English data files (not needed for German version)
+list\ animals\ until\ failure_files/eggs.js
+list\ animals\ until\ failure_files/id_to_title.js
+list\ animals\ until\ failure_files/lower_title_to_id.js
+list\ animals\ until\ failure_files/parent.js
+list\ animals\ until\ failure_files/thanks.js
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Node modules (if any)
+node_modules/
